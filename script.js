@@ -1,19 +1,30 @@
 // Ensure the script runs after the HTML is fully loaded
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", function () {
     // Select the form and feedback div
     const form = document.getElementById("registration-form");
     const feedbackDiv = document.getElementById("form-feedback");
 
     // Add an event listener to handle form submission
-    form.addEventListener("submit", (event) => {
+    form.addEventListener("submit", function (event) {
         event.preventDefault(); // Prevent form submission to the server
 
         // Retrieve and trim input values
-        const username = document.getElementById("username").value.trim();
-        const email = document.getElementById("email").value.trim();
-        const password = document.getElementById("password").value.trim();
+        const username = getTrimmedValue("username");
+        const email = getTrimmedValue("email");
+        const password = getTrimmedValue("password");
 
-        // Initialize validation status and error messages array
+        // Validate inputs and display feedback
+        const { isValid, messages } = validateInputs(username, email, password);
+        displayFeedback(isValid, messages);
+    });
+
+    // Helper function to retrieve and trim input values
+    function getTrimmedValue(id) {
+        return document.getElementById(id).value.trim();
+    }
+
+    // Function to validate username, email, and password
+    function validateInputs(username, email, password) {
         let isValid = true;
         const messages = [];
 
@@ -35,7 +46,11 @@ document.addEventListener("DOMContentLoaded", () => {
             messages.push("Password must be at least 8 characters long.");
         }
 
-        // Display feedback based on validation results
+        return { isValid, messages };
+    }
+
+    // Function to display feedback to the user
+    function displayFeedback(isValid, messages) {
         feedbackDiv.style.display = "block"; // Make feedback visible
 
         if (isValid) {
@@ -45,5 +60,5 @@ document.addEventListener("DOMContentLoaded", () => {
             feedbackDiv.innerHTML = messages.join("<br>"); // Display errors
             feedbackDiv.style.color = "#dc3545"; // Error color (red)
         }
-    });
+    }
 });
